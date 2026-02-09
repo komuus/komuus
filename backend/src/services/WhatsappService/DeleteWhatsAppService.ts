@@ -1,5 +1,6 @@
 import Whatsapp from "../../models/Whatsapp";
 import AppError from "../../errors/AppError";
+import { removeWbot } from "../../libs/wbot";
 
 interface DeleteWhatsAppRequest {
   id: string;
@@ -18,6 +19,7 @@ const DeleteWhatsAppService = async ({
     throw new AppError("ERR_NO_WAPP_FOUND", 404);
   }
 
+  await removeWbot(+id);
   await whatsapp.destroy();
 };
 

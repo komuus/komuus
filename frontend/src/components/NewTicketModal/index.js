@@ -87,8 +87,15 @@ const NewTicketModal = ({ modalOpen, onClose }) => {
 		if (newValue?.number) {
 			setSelectedContact(newValue);
 		} else if (newValue?.name) {
-			setNewContact({ name: newValue.name });
+			const num = newValue.name.replace(/\D/g, "");
+			if (num.length >= 8) {
+				setNewContact({ name: "", number: num });
+			} else {
+				setNewContact({ name: newValue.name });
+			}
 			setContactModalOpen(true);
+		} else {
+			setSelectedContact(null);
 		}
 	};
 

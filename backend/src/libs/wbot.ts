@@ -64,10 +64,12 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         await whatsapp.update({ qrcode: qr, status: "qrcode", retries: 0 });
 
         const sessionIndex = sessions.findIndex(s => s.id === whatsapp.id);
-        if (sessionIndex === -1) {
-          wbot.id = whatsapp.id;
-          sessions.push(wbot);
+        if (sessionIndex !== -1) {
+          sessions.splice(sessionIndex, 1);
         }
+
+        wbot.id = whatsapp.id;
+        sessions.push(wbot);
 
         io.emit("whatsappSession", {
           action: "update",
@@ -117,10 +119,12 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         });
 
         const sessionIndex = sessions.findIndex(s => s.id === whatsapp.id);
-        if (sessionIndex === -1) {
-          wbot.id = whatsapp.id;
-          sessions.push(wbot);
+        if (sessionIndex !== -1) {
+          sessions.splice(sessionIndex, 1);
         }
+
+        wbot.id = whatsapp.id;
+        sessions.push(wbot);
 
         wbot.sendPresenceAvailable();
         await syncUnreadMessages(wbot);
@@ -142,11 +146,11 @@ export const getWbot = (whatsappId: number): Session => {
   return sessions[sessionIndex];
 };
 
-export const removeWbot = (whatsappId: number): void => {
+export const removeWbot = async (whatsappId: number): Promise<void> => {
   try {
     const sessionIndex = sessions.findIndex(s => s.id === whatsappId);
     if (sessionIndex !== -1) {
-      sessions[sessionIndex].destroy();
+      await sessions[sessionIndex].destroy();
       sessions.splice(sessionIndex, 1);
     }
   } catch (err) {
