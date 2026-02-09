@@ -67,7 +67,7 @@ export const getContact = async (
 export const store = async (req: Request, res: Response): Promise<Response> => {
   const newContact: ContactData = req.body;
   const { tenantId } = req.user;
-  newContact.number = newContact.number.replace("-", "").replace(" ", "");
+  newContact.number = newContact.number.replace(/\D/g, "");
 
   const schema = Yup.object().shape({
     name: Yup.string().required(),
@@ -125,6 +125,10 @@ export const update = async (
 ): Promise<Response> => {
   const contactData: ContactData = req.body;
   const { tenantId } = req.user;
+
+  if (contactData.number) {
+    contactData.number = contactData.number.replace(/\D/g, "");
+  }
 
   const schema = Yup.object().shape({
     name: Yup.string(),
